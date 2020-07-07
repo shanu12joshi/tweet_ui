@@ -13,7 +13,9 @@ import 'package:tweet_ui/src/tweet_text.dart';
 import 'package:tweet_ui/src/twitter_logo.dart';
 import 'package:tweet_ui/src/url_launcher.dart';
 import 'package:tweet_ui/src/view_mode.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
+import 'Thread.dart';
 
 class EmbeddedTweetView extends StatelessWidget {
   /// Business logic class created from [TweetVM.fromApiModel]
@@ -69,10 +71,7 @@ class EmbeddedTweetView extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              WebView(
-                initialUrl: _tweetVM.tweetLink,
-              );
-//              openUrl(_tweetVM.tweetLink);
+              openUrl(_tweetVM.tweetLink);
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -83,7 +82,21 @@ class EmbeddedTweetView extends StatelessWidget {
                     child: GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        openUrl(_tweetVM.getDisplayTweet().userLink);
+                        print("hi");
+                        _launchURL(
+                            context, _tweetVM.getDisplayTweet().userLink);
+//                        Navigator.push(
+//                          context,
+//                          MaterialPageRoute(
+//                            builder: (context) => Thread(
+//                              link: _tweetVM.getDisplayTweet().userLink,
+//                            ),
+//                          ),
+//                        );
+                        //                        WebView(
+//                          initialUrl: _tweetVM.getDisplayTweet().userLink,
+//                        );
+//                        openUrl(_tweetVM.getDisplayTweet().userLink);
                       },
                       child: Stack(
                         children: <Widget>[
@@ -137,7 +150,8 @@ class EmbeddedTweetView extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      openUrl(_tweetVM.tweetLink);
+                      print('yo');
+                      _launchURL(context, _tweetVM.tweetLink);
                     },
                     child: TweetText(
                       _tweetVM,
@@ -217,7 +231,7 @@ class EmbeddedTweetView extends StatelessWidget {
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                openUrl(_tweetVM.userLink);
+                _launchURL(context, _tweetVM.userLink);
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -250,5 +264,32 @@ class EmbeddedTweetView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _launchURL(BuildContext context, String link) async {
+    try {
+      await launch(
+        link,
+//      'https://www.twitter.com/COVIDNewsByMIB',
+//      'https://www.instagram.com/p/CCLazYdDWlWmbulkq6jwvB3biebM-rw-aUb4H00/',
+        option: new CustomTabsOption(
+          toolbarColor: Theme.of(context).primaryColor,
+          enableDefaultShare: true,
+          enableUrlBarHiding: true,
+          showPageTitle: true,
+          animation: new CustomTabsAnimation.slideIn(),
+          // or user defined animation.
+          extraCustomTabs: <String>[
+            // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox
+            'org.mozilla.firefox',
+            // ref. https://play.google.com/store/apps/details?id=com.microsoft.emmx
+            'com.microsoft.emmx',
+          ],
+        ),
+      );
+    } catch (e) {
+      // An exception is thrown if browser app is not installed on Android device.
+      debugPrint(e.toString());
+    }
   }
 }

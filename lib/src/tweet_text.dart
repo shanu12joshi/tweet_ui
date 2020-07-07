@@ -9,6 +9,7 @@ import 'package:tweet_ui/models/api/entieties/symbol_entity.dart';
 import 'package:tweet_ui/models/api/entieties/url_entity.dart';
 import 'package:tweet_ui/models/viewmodels/tweet_vm.dart';
 import 'package:tweet_ui/src/url_launcher.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 class TweetText extends StatelessWidget {
   TweetText(
@@ -66,7 +67,8 @@ class TweetText extends StatelessWidget {
         // add any plain text before the next entity
         if (startIndex > boundary) {
           spans.add(TextSpan(
-            text: unescape.convert(String.fromCharCodes(tweetVM.textRunes, boundary, min(startIndex, tweetVM.endDisplayText))),
+            text: unescape.convert(String.fromCharCodes(tweetVM.textRunes,
+                boundary, min(startIndex, tweetVM.endDisplayText))),
             style: textStyle,
           ));
         }
@@ -79,12 +81,14 @@ class TweetText extends StatelessWidget {
             style: clickableTextStyle,
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
+                print('brosss');
                 openUrl(urlEntity.url);
               },
           ));
         } else {
           final spanText = unescape.convert(
-            String.fromCharCodes(tweetVM.textRunes, startIndex, min(entity.end, tweetVM.endDisplayText)),
+            String.fromCharCodes(tweetVM.textRunes, startIndex,
+                min(entity.end, tweetVM.endDisplayText)),
           );
           spans.add(TextSpan(
             text: spanText,
@@ -93,13 +97,16 @@ class TweetText extends StatelessWidget {
               ..onTap = () async {
                 if (entity.runtimeType == MentionEntity) {
                   MentionEntity mentionEntity = (entity as MentionEntity);
-                  openUrl("https://twitter.com/${mentionEntity.screenName}");
+                  _launchURL(context,
+                      "https://twitter.com/${mentionEntity.screenName}");
                 } else if (entity.runtimeType == SymbolEntity) {
                   SymbolEntity symbolEntity = (entity as SymbolEntity);
-                  openUrl("https://twitter.com/search?q=${symbolEntity.text}");
+                  _launchURL(context,
+                      "https://twitter.com/search?q=${symbolEntity.text}");
                 } else if (entity.runtimeType == HashtagEntity) {
                   HashtagEntity hashtagEntity = (entity as HashtagEntity);
-                  openUrl("https://twitter.com/hashtag/${hashtagEntity.text}");
+                  _launchURL(context,
+                      "https://twitter.com/hashtag/${hashtagEntity.text}");
                 }
               },
           ));
@@ -110,11 +117,39 @@ class TweetText extends StatelessWidget {
       });
 
       spans.add(TextSpan(
-        text: unescape.convert(String.fromCharCodes(tweetVM.textRunes, boundary, min(tweetVM.textRunes.length, tweetVM.endDisplayText))),
+        text: unescape.convert(String.fromCharCodes(tweetVM.textRunes, boundary,
+            min(tweetVM.textRunes.length, tweetVM.endDisplayText))),
         style: textStyle,
       ));
     }
 
     return spans;
+  }
+
+  void _launchURL(BuildContext context, String link) async {
+    try {
+      await launch(
+        link,
+//      'https://www.twitter.com/COVIDNewsByMIB',
+//      'https://www.instagram.com/p/CCLazYdDWlWmbulkq6jwvB3biebM-rw-aUb4H00/',
+        option: new CustomTabsOption(
+          toolbarColor: Theme.of(context).primaryColor,
+          enableDefaultShare: true,
+          enableUrlBarHiding: true,
+          showPageTitle: true,
+          animation: new CustomTabsAnimation.slideIn(),
+          // or user defined animation.
+          extraCustomTabs: <String>[
+            // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox
+            'org.mozilla.firefox',
+            // ref. https://play.google.com/store/apps/details?id=com.microsoft.emmx
+            'com.microsoft.emmx',
+          ],
+        ),
+      );
+    } catch (e) {
+      // An exception is thrown if browser app is not installed on Android device.
+      debugPrint(e.toString());
+    }
   }
 }
