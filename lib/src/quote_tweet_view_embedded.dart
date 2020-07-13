@@ -8,6 +8,7 @@ import 'package:tweet_ui/src/media_container.dart';
 import 'package:tweet_ui/src/tweet_text.dart';
 import 'package:tweet_ui/src/url_launcher.dart';
 import 'package:tweet_ui/src/view_mode.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 typedef onTapImage = void Function(
     List<String> allPhotos, int photoIndex, String hashcode);
@@ -48,7 +49,7 @@ class QuoteTweetViewEmbed extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        openUrl(tweetVM.tweetLink);
+        _launchURL(context, tweetVM.tweetLink);
       },
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -97,5 +98,32 @@ class QuoteTweetViewEmbed extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _launchURL(BuildContext context, String link) async {
+    try {
+      await launch(
+        link,
+//      'https://www.twitter.com/COVIDNewsByMIB',
+//      'https://www.instagram.com/p/CCLazYdDWlWmbulkq6jwvB3biebM-rw-aUb4H00/',
+        option: new CustomTabsOption(
+          toolbarColor: Theme.of(context).primaryColor,
+          enableDefaultShare: true,
+          enableUrlBarHiding: true,
+          showPageTitle: true,
+          animation: new CustomTabsAnimation.slideIn(),
+          // or user defined animation.
+          extraCustomTabs: <String>[
+            // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox
+            'org.mozilla.firefox',
+            // ref. https://play.google.com/store/apps/details?id=com.microsoft.emmx
+            'com.microsoft.emmx',
+          ],
+        ),
+      );
+    } catch (e) {
+      // An exception is thrown if browser app is not installed on Android device.
+      debugPrint(e.toString());
+    }
   }
 }

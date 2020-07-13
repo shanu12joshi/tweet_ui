@@ -15,7 +15,6 @@ import 'package:tweet_ui/src/url_launcher.dart';
 import 'package:tweet_ui/src/view_mode.dart';
 
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
-import 'Thread.dart';
 
 class EmbeddedTweetView extends StatelessWidget {
   /// Business logic class created from [TweetVM.fromApiModel]
@@ -200,26 +199,17 @@ class EmbeddedTweetView extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(top: 5, left: 20, right: 20, bottom: 5),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Icon(
-                  Icons.favorite_border,
-                  color: (darkMode) ? Colors.grey[400] : Colors.grey[600],
-                  size: 18,
-                ),
                 Container(
-                    margin: EdgeInsets.only(left: 6),
-                    child: Text(_tweetVM.favoriteCount.toString(),
-                        style: TextStyle(
-                            color: (darkMode)
-                                ? Colors.grey[400]
-                                : Colors.grey[600]))),
-                Container(
-                    margin: EdgeInsets.only(left: 16),
-                    child: Text(_tweetVM.createdAt,
-                        style: TextStyle(
-                            color: (darkMode)
-                                ? Colors.grey[400]
-                                : Colors.grey[600])))
+                  margin: EdgeInsets.only(left: 16),
+                  child: Text(
+                    _tweetVM.createdAt,
+                    style: TextStyle(
+                      color: (darkMode) ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                )
               ],
             ),
           ),
