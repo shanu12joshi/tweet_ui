@@ -260,14 +260,11 @@ class EmbeddedTweetView extends StatelessWidget {
     try {
       await launch(
         link,
-//      'https://www.twitter.com/COVIDNewsByMIB',
-//      'https://www.instagram.com/p/CCLazYdDWlWmbulkq6jwvB3biebM-rw-aUb4H00/',
         option: new CustomTabsOption(
           toolbarColor: Theme.of(context).primaryColor,
           enableDefaultShare: true,
           enableUrlBarHiding: true,
           showPageTitle: true,
-          animation: new CustomTabsAnimation.slideIn(),
           // or user defined animation.
           extraCustomTabs: <String>[
             // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox

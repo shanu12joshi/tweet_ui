@@ -137,7 +137,6 @@ class TweetText extends StatelessWidget {
           enableDefaultShare: true,
           enableUrlBarHiding: true,
           showPageTitle: true,
-          animation: new CustomTabsAnimation.slideIn(),
           // or user defined animation.
           extraCustomTabs: <String>[
             // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox
