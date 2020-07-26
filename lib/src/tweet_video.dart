@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:tweet_ui/models/viewmodels/tweet_vm.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 // TODO add option to choose if the video should be opened in a new window or in this widget.
 // TODO make TweetGif and don't show the play/pause buttons, autoplay ON, no gesture detector, no progresbar
@@ -40,22 +41,28 @@ class _TweetVideoState extends State<TweetVideo>
       allowMuting: !widget.tweetVM.getDisplayTweet().hasGif,
       autoPlay: widget.tweetVM.getDisplayTweet().hasGif,
       looping: widget.tweetVM.getDisplayTweet().hasGif,
-      overlay: Padding(
-        padding: const EdgeInsets.only(
-          left: 4.0,
+      overlay: VisibilityDetector(
+        key: Key(widget.tweetVM.tweetLink),
+        onVisibilityChanged: (visibilityInfo){
+          _controller.pause();
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 4.0,
+          ),
+          child: widget.tweetVM.getDisplayTweet().hasGif
+              ? Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Image.asset(
+                    "assets/tw__ic_gif_badge.png",
+                    fit: BoxFit.fitWidth,
+                    package: 'tweet_ui',
+                    height: 16,
+                    width: 16,
+                  ),
+                )
+              : Container(),
         ),
-        child: widget.tweetVM.getDisplayTweet().hasGif
-            ? Align(
-                alignment: Alignment.bottomLeft,
-                child: Image.asset(
-                  "assets/tw__ic_gif_badge.png",
-                  fit: BoxFit.fitWidth,
-                  package: 'tweet_ui',
-                  height: 16,
-                  width: 16,
-                ),
-              )
-            : Container(),
       ),
       aspectRatio: widget.tweetVM.getDisplayTweet().videoAspectRatio,
     );
