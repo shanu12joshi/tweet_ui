@@ -81,7 +81,6 @@ class TweetText extends StatelessWidget {
             style: clickableTextStyle,
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
-                print('brosss');
                 openUrl(urlEntity.url);
               },
           ));
